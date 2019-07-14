@@ -1,6 +1,6 @@
 # SMDR call log analytics
 
-A package to help us run some analytics on our call logs we've been collecting for the past few years. By collecting I mean sending to my email and forgetting all about them.
+A package to help us run some analytics on our call logs we've been collecting for the past few years. By collecting I mean sending to my email and forgetting all about them :sweat_smile:
 
 ## Installation
 We use pipenv to manage virtual environments and dependencies. Just `pipenv install` to create a virtualenv if it doesn't exist and install all dependencies.
@@ -13,7 +13,7 @@ EMAIL_PASS: your password,
 EMAIL_SERVER: your email host
 EMAIL_FOLDER: The email folder where your SMDR attachments are
 ```
-I use the excellent [direnv](https://direnv.net/) utility to manage my env variables per folder and keep them out of source control :)
+I use the excellent [direnv](https://direnv.net/) utility to manage my env variables per folder and keep them out of source control :slightly_smiling_face:
 
 After setting up the env variables just run `python process.py` to run the program. It doesn't do much other than download attachments at the moment but watch this space for updates!
 
