@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 imapclient = "*"
 logme = "*"
+pdbpp = "*"
 
 [dev-packages]
 pylint = "*"
