@@ -8,8 +8,8 @@ We use pipenv to manage virtual environments and dependencies. Just `pipenv inst
 ## Running the program
 To actually connect to your email and download attachments sent by the iPECS you have to have some environment variables set up:
 ```
-EMAIL_USER: your email address,
-EMAIL_PASS: your password,
+EMAIL_USER: your email address
+EMAIL_PASS: your password
 EMAIL_SERVER: your email host
 EMAIL_FOLDER: The email folder where your SMDR attachments are
 ```
