@@ -7,11 +7,10 @@ from imapclient import IMAPClient, exceptions
 from settings import EMAIL_SERVER, EMAIL_USER, EMAIL_PASS, FOLDER_TO_SCAN
 
 SERVER = None
-module_logger = logme.log(scope="module")
+logger = logme.log(scope="module")
 
 
-@logme.log
-def setup(logger=None):
+def setup():
     global SERVER
 
     if not all([EMAIL_USER, EMAIL_PASS, EMAIL_SERVER]):
@@ -25,8 +24,7 @@ def setup(logger=None):
     SERVER.login(EMAIL_USER, EMAIL_PASS)
 
 
-@logme.log
-def get_attachments(logger=None):
+def get_attachments():
     try:
         logger.debug(f"Trying to get attachments from {FOLDER_TO_SCAN}")
         select_info = SERVER.select_folder(FOLDER_TO_SCAN)
@@ -52,24 +50,20 @@ def get_attachments(logger=None):
         logger.error(e)
 
 
-@logme.log
-def teardown(logger=None):
+def teardown():
     resp = SERVER.logout()
     logger.debug(resp)
     logger.info("Logged out")
 
 
-@logme.log
 def read_attachments():
     pass
 
 
-@logme.log
 def parse_smdr_data():
     pass
 
 
-@logme.log
 def save_to_db(parsed_smdr_line):
     pass
 
@@ -79,7 +73,7 @@ if __name__ == "__main__":
         setup()
         get_attachments()
     except Exception as e:
-        module_logger.critical(f"Failed to get attachments: {e}")
+        logger.critical(f"Failed to get attachments: {e}")
     finally:
 
         teardown()
