@@ -2,6 +2,7 @@ import os
 import sys
 import logme
 import email
+import micromenu
 
 from io import StringIO
 from imapclient import IMAPClient, exceptions
@@ -13,12 +14,12 @@ ATTACHMENTS_PATH = "./attachments"
 logger = logme.log(scope="module")
 
 
-def setup():
+def login():
     global SERVER
 
     if not all([EMAIL_USER, EMAIL_PASS, EMAIL_SERVER]):
         logger.error("Please provide all of the login information: email, password and host")
-        sys.exit(1)
+        sys.exit(0)
 
     logger.info(f"Connecting to {EMAIL_SERVER}")
     SERVER = IMAPClient(EMAIL_SERVER)
@@ -76,10 +77,13 @@ def update_latest_email_downloaded(uid):
         logger.warning(f"[{uid}] is not a valid UID")
 
 
-def teardown():
-    resp = SERVER.logout()
-    logger.debug(resp)
-    logger.info("Logged out")
+def logout():
+    if SERVER is not None:
+        resp = SERVER.logout()
+        logger.debug(resp)
+        logger.info("Logged out")
+    else:
+        logger.warning("Already logged out")
 
 
 def unzip_attachments():
@@ -134,14 +138,17 @@ def get_all_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
+
 if __name__ == "__main__":
     try:
-        setup()
-        get_attachments()
-        # unzip_attachments()
-        parse_and_save_smdr_data()
+        menu = micromenu.Menu("ACMA SMDR Analytics", "CLI to download and analyse telephone data from ACMA's help desk", min_width=25)
+        menu.add_function_item("Login to outlook", login, {})
+        menu.add_function_item("Download attachments", get_attachments, {})
+        menu.add_function_item("Parse and save SMDR data", parse_and_save_smdr_data, {})
+        menu.add_function_item("Logout", logout, {})
+        menu.show()
+   
     except Exception as e:
         logger.critical(f"Failed to get SMDR Analytics: {e}")
     finally:
-
-        teardown()
+        logout()
