@@ -3,7 +3,9 @@
 A package to help us run some analytics on our call logs we've been collecting for the past few years. By collecting I mean sending to my email and forgetting all about them :sweat_smile:
 
 ## Installation
-We use pipenv to manage virtual environments and dependencies. Just `pipenv install` to create a virtualenv if it doesn't exist and install all dependencies.
+Create or activate your virtualenv and then run `pip install -r requirements.txt`.
+If you want some additional dev dependencies: `pip install -r requirements_dev.txt` 
+
 
 ## Running the program
 To actually connect to your email and download attachments sent by the iPECS you have to have some environment variables set up:
