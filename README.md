@@ -8,12 +8,12 @@ If you want some additional dev dependencies: `pip install -r requirements_dev.t
 
 
 ## Running the program
-To actually connect to your email and download attachments sent by the iPECS you have to have some environment variables set up:
+To actually connect to your email and download attachments sent by the iPECS you have to have some environment variables set up in a `.env` or `.envrc` file:
 ```
-EMAIL_USER: your email address
-EMAIL_PASS: your password
-EMAIL_SERVER: your email host
-EMAIL_FOLDER: The email folder where your SMDR attachments are
+export EMAIL_USER="your email address"
+export EMAIL_PASS="your password"
+export EMAIL_SERVER="your email server"
+export EMAIL_FOLDER="the folder emails are in"
 ```
 I use the excellent [direnv](https://direnv.net/) utility to manage my env variables per folder and keep them out of source control :slightly_smiling_face:
 
