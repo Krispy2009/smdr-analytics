@@ -25,7 +25,9 @@ def login():
     SERVER = IMAPClient(EMAIL_SERVER)
 
     logger.info(f"Logging in: {EMAIL_USER}")
-    SERVER.login(EMAIL_USER, EMAIL_PASS)
+    resp = SERVER.login(EMAIL_USER, EMAIL_PASS)
+    logger.debug(resp)
+    logger.debug(f"Logged in to account {EMAIL_USER} on {EMAIL_SERVER}")
 
 
 def get_attachments():
@@ -34,7 +36,6 @@ def get_attachments():
         select_info = SERVER.select_folder(FOLDER_TO_SCAN, readonly=True)
         logger.debug(f"Total emails: {select_info.get(b'EXISTS')}")
         latest_email_downloaded = get_latest_email_downloaded()
-        logger.debug(f"Latest UID downloaded: {latest_email_downloaded}")
 
         # Get all messages after latest uid
         messages = SERVER.search(["UID", f"{latest_email_downloaded+1}:*"])
@@ -63,9 +64,13 @@ def get_attachments():
 
 
 def get_latest_email_downloaded():
+    if not os.path.isfile("latest_email"):
+        logger.debug('No latest email found')
+        return 0
     with open("latest_email", "r") as f:
         uid = f.readline()
     logger.debug(f"retrieved latest uid: {uid}")
+
     return int(uid)
 
 
