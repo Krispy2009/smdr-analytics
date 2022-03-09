@@ -11,6 +11,7 @@ from sylk_parser import SylkParser
 
 SERVER = None
 ATTACHMENTS_PATH = "./attachments"
+UNZIPPED_ATTACHMENTS_PATH = f"{ATTACHMENTS_PATH}/unzipped"
 logger = logme.log(scope="module")
 
 
@@ -95,14 +96,17 @@ def unzip_attachments():
     """ Unused for now """
     # List all the items in the path directory, but keep only the files
     all_files = get_all_files(ATTACHMENTS_PATH)
+    if not os.path.exists(UNZIPPED_ATTACHMENTS_PATH):
+        os.mkdir(UNZIPPED_ATTACHMENTS_PATH)
+        logger.debug('Created unzipped dir')
     for file in all_files:
 
-        # If we are checking a gz make sure there isnot already a slk with the same name
+        # If we are checking a gz make sure there is not already a slk with the same name
         # which means we have already unzipped it
         if file.endswith("gz"):
 
             zipped_file_path = os.path.join(ATTACHMENTS_PATH, file)
-            unzipped_file_path = os.path.join(ATTACHMENTS_PATH, file[:-3])
+            unzipped_file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH , file[:-3])
 
             logger.debug(f"Checking {file}")
             already_unzipped = os.path.isfile(unzipped_file_path)
@@ -118,12 +122,12 @@ def unzip_attachments():
 
 
 def parse_and_save_smdr_data():
-    all_files = get_all_files(ATTACHMENTS_PATH)
+    all_files = get_all_files(UNZIPPED_ATTACHMENTS_PATH)
     logger.debug(f"GOT {len(all_files)} files to parse")
     for file in all_files[:5]:
         if file.endswith("slk"):
             # only parse slk files - ignore gzipped files
-            file_path = os.path.join(ATTACHMENTS_PATH, file)
+            file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH, file)
             parser = SylkParser(file_path)
             fbuf = StringIO()
             parser.to_csv(fbuf)
@@ -149,6 +153,7 @@ if __name__ == "__main__":
         menu = micromenu.Menu("ACMA SMDR Analytics", "CLI to download and analyse telephone data from ACMA's help desk", min_width=25)
         menu.add_function_item("Login to outlook", login, {})
         menu.add_function_item("Download attachments", get_attachments, {})
+        menu.add_function_item("Unzip attachments", unzip_attachments, {})
         menu.add_function_item("Parse and save SMDR data", parse_and_save_smdr_data, {})
         menu.add_function_item("Logout", logout, {})
         menu.show()
