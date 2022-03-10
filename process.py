@@ -3,6 +3,7 @@ import sys
 import logme
 import email
 import micromenu
+import gzip
 
 from io import StringIO
 from imapclient import IMAPClient, exceptions
@@ -106,7 +107,7 @@ def unzip_attachments():
         if file.endswith("gz"):
 
             zipped_file_path = os.path.join(ATTACHMENTS_PATH, file)
-            unzipped_file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH , file[:-3])
+            unzipped_file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH , file[:-3]).replace(" ","_")
 
             logger.debug(f"Checking {file}")
             already_unzipped = os.path.isfile(unzipped_file_path)
@@ -115,10 +116,9 @@ def unzip_attachments():
                 continue
 
             unzipped_file = open(unzipped_file_path, "wb")
-            with open(zipped_file_path, "rb") as f:
-                bindata = f.read()
-            unzipped_file.write(bindata)
-            unzipped_file.close()
+            with gzip.open(zipped_file_path, "rb") as f:
+                with open (unzipped_file_path, 'wb') as fw:
+                        fw.write(f.read())
 
 
 def parse_and_save_smdr_data():
@@ -127,6 +127,7 @@ def parse_and_save_smdr_data():
     for file in all_files[:5]:
         if file.endswith("slk"):
             # only parse slk files - ignore gzipped files
+            import pdb; pdb.set_trace()
             file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH, file)
             parser = SylkParser(file_path)
             fbuf = StringIO()
