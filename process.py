@@ -20,7 +20,9 @@ def login():
     global SERVER
 
     if not all([EMAIL_USER, EMAIL_PASS, EMAIL_SERVER]):
-        logger.error("Please provide all of the login information: email, password and host")
+        logger.error(
+            "Please provide all of the login information: email, password and host"
+        )
         sys.exit(0)
 
     logger.info(f"Connecting to {EMAIL_SERVER}")
@@ -53,7 +55,9 @@ def get_attachments():
                     if not os.path.exists(ATTACHMENTS_PATH[2:]):
                         os.mkdir("attachments")
                         logger.info("created attachments directory")
-                    path = os.path.join(f"{ATTACHMENTS_PATH}/{uid}_{attachment_filename}")
+                    path = os.path.join(
+                        f"{ATTACHMENTS_PATH}/{uid}_{attachment_filename}"
+                    )
 
                     if not os.path.isfile(path):
                         with open(path, "wb") as f:
@@ -67,7 +71,7 @@ def get_attachments():
 
 def get_latest_email_downloaded():
     if not os.path.isfile("latest_email"):
-        logger.debug('No latest email found')
+        logger.debug("No latest email found")
         return 0
     with open("latest_email", "r") as f:
         uid = f.readline()
@@ -94,12 +98,11 @@ def logout():
 
 
 def unzip_attachments():
-    """ Unused for now """
     # List all the items in the path directory, but keep only the files
     all_files = get_all_files(ATTACHMENTS_PATH)
     if not os.path.exists(UNZIPPED_ATTACHMENTS_PATH):
         os.mkdir(UNZIPPED_ATTACHMENTS_PATH)
-        logger.debug('Created unzipped dir')
+        logger.debug("Created unzipped dir")
     for file in all_files:
 
         # If we are checking a gz make sure there is not already a slk with the same name
@@ -107,7 +110,9 @@ def unzip_attachments():
         if file.endswith("gz"):
 
             zipped_file_path = os.path.join(ATTACHMENTS_PATH, file)
-            unzipped_file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH , file[:-3]).replace(" ","_")
+            unzipped_file_path = os.path.join(
+                UNZIPPED_ATTACHMENTS_PATH, file[:-3]
+            ).replace(" ", "_")
 
             logger.debug(f"Checking {file}")
             already_unzipped = os.path.isfile(unzipped_file_path)
@@ -117,8 +122,8 @@ def unzip_attachments():
 
             unzipped_file = open(unzipped_file_path, "wb")
             with gzip.open(zipped_file_path, "rb") as f:
-                with open (unzipped_file_path, 'wb') as fw:
-                        fw.write(f.read())
+                with open(unzipped_file_path, "wb") as fw:
+                    fw.write(f.read())
 
 
 def parse_and_save_smdr_data():
@@ -127,7 +132,6 @@ def parse_and_save_smdr_data():
     for file in all_files[:5]:
         if file.endswith("slk"):
             # only parse slk files - ignore gzipped files
-            import pdb; pdb.set_trace()
             file_path = os.path.join(UNZIPPED_ATTACHMENTS_PATH, file)
             parser = SylkParser(file_path)
             fbuf = StringIO()
@@ -148,17 +152,20 @@ def get_all_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
-
 if __name__ == "__main__":
     try:
-        menu = micromenu.Menu("ACMA SMDR Analytics", "CLI to download and analyse telephone data from ACMA's help desk", min_width=25)
+        menu = micromenu.Menu(
+            "ACMA SMDR Analytics",
+            "CLI to download and analyse telephone data from ACMA's help desk",
+            min_width=25,
+        )
         menu.add_function_item("Login to outlook", login, {})
         menu.add_function_item("Download attachments", get_attachments, {})
         menu.add_function_item("Unzip attachments", unzip_attachments, {})
         menu.add_function_item("Parse and save SMDR data", parse_and_save_smdr_data, {})
         menu.add_function_item("Logout", logout, {})
         menu.show()
-   
+
     except Exception as e:
         logger.critical(f"Failed to get SMDR Analytics: {e}")
     finally:
