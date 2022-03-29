@@ -9,6 +9,7 @@ from io import StringIO
 from imapclient import IMAPClient, exceptions
 from settings import EMAIL_SERVER, EMAIL_USER, EMAIL_PASS, FOLDER_TO_SCAN
 from sylk_parser import SylkParser
+from database import db
 
 SERVER = None
 ATTACHMENTS_PATH = "./attachments"
@@ -131,6 +132,7 @@ def unzip_attachments():
 def parse_and_save_smdr_data():
     all_files = get_all_files(UNZIPPED_ATTACHMENTS_PATH)
     logger.debug(f"GOT {len(all_files)} files to parse")
+    # TODO remove the limit for all files when done with testing
     for file in all_files[:5]:
         if file.endswith("slk"):
             # only parse slk files - ignore gzipped files
@@ -141,13 +143,31 @@ def parse_and_save_smdr_data():
 
             data = fbuf.getvalue().split("\n")
 
+            headers = []
             for line in data:
+                if line.startswith('"Station'):
+                    continue
+                line = pad_line(line).split(",")
                 print(line)
-                # TODO: Add each row to db
+                save_to_db(line)
+
+
+def pad_line(line):
+    """hacky way to ensure list is going to be split in 8 parts"""
+    num_commas = line.count(",")
+    line = line + "," * (7 - num_commas)
+    return line
 
 
 def save_to_db(parsed_smdr_line):
-    pass
+
+    """for now we assume the list and the columns are in the same order"""
+    query = f"""
+        Insert into call_logs VALUES {tuple(parsed_smdr_line)}
+    """
+
+    db.execute(query)
+    db.commit()
 
 
 def get_all_files(path):

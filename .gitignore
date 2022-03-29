@@ -3,3 +3,4 @@ __pycache__/
 .envrc
 attachments/
 latest_email
+calls.db
