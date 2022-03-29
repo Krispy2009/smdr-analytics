@@ -89,10 +89,12 @@ def update_latest_email_downloaded(uid):
 
 
 def logout():
+    global SERVER
     if SERVER is not None:
         resp = SERVER.logout()
         logger.debug(resp)
         logger.info("Logged out")
+        SERVER = None
     else:
         logger.warning("Already logged out")
 
