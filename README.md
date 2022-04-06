@@ -17,6 +17,6 @@ export EMAIL_FOLDER="the folder emails are in"
 ```
 I use the excellent [direnv](https://direnv.net/) utility to manage my env variables per folder and keep them out of source control :slightly_smiling_face:
 
-After setting up the env variables just run `python process.py` to run the program. It doesn't do much other than download attachments at the moment but watch this space for updates!
+After setting up the env variables just run `python process.py` to run the program. 
 
 :tada:
